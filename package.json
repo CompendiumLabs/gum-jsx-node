@@ -19,7 +19,7 @@
     "typecheck": "bun tsc --noEmit"
   },
   "peerDependencies": {
-    "@gum-jsx/core": "^1.6.4"
+    "@gum-jsx/core": "*"
   },
   "peerDependenciesMeta": {
     "@gum-jsx/core": {
