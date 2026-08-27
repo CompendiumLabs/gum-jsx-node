@@ -12,7 +12,7 @@ batteries-included `gum-jsx` package.
 - `src/index.ts` - Package entry, re-exports render and term
 - `src/render.ts` - `rasterizeSvg` (PNG `Buffer`) and `rasterizePixels` (`ImageData`) with node-canvas. Fonts: `registerCanvasFonts` hands core's font registry (`FONT_PATHS` from `@gum-jsx/core/fonts`) to node-canvas lazily at the first draw, tracking what it has registered, so faces registered after this module is imported (the KaTeX faces from `@gum-jsx/math`, a host's own via `registerFont`) are still found. Bold and italic faces that are not their own family (`FONT_FACES`) are registered by their file's registry name; fontconfig matches them by the base family plus weight/style that `Span` emits
 - `src/term.ts` - `ansi`, the kitty graphics protocol (`formatImage` for PNG, `formatPixels` for raw RGBA), `readStdin`
-- `scripts/bench.ts` - Render benchmark (`bun scripts/bench.ts`): evaluate, svg, png and pixel paths at several sizes, on inline cases plus core's `docs/code/Plot.jsx` (found through core's `./docs/*` export)
+- `scripts/bench.ts` - Render benchmark (`bun scripts/bench.ts`): evaluate, svg, png and pixel paths at several sizes, on inline cases plus `docs/code/Plot.jsx` from `@gum-jsx/docs` (a dev dependency, which locates its own examples)
 
 ## Commands
 

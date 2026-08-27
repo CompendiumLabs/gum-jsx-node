@@ -1,11 +1,11 @@
 #! /usr/bin/env bun
 
-import { basename, dirname, join, resolve } from 'path'
+import { basename, join } from 'path'
 import { readFileSync } from 'fs'
-import { fileURLToPath } from 'url'
 import { performance } from 'perf_hooks'
 
 import { evaluateGum } from '@gum-jsx/core/eval'
+import { docsCodeDir, dataDir } from '@gum-jsx/docs'
 import { rasterizePixels, rasterizeSvg } from '../src/render'
 import type { Size } from '@gum-jsx/core/lib/types'
 import type { ThemeName } from '@gum-jsx/core/lib/theme'
@@ -34,14 +34,7 @@ type BenchOptions = {
   sizes: Size[]
 }
 
-// the docs examples and their data come from core (its ./docs/* export)
-const coreDocsDir = resolve(dirname(fileURLToPath(import.meta.resolve('@gum-jsx/core/docs/code/Plot.jsx'))), '..')
-function coreDocs(rel: string): string {
-  return join(coreDocsDir, rel)
-}
-
-const dataDir = coreDocs('data')
-
+// the docs examples and the data they load come from @gum-jsx/docs
 function loadFile(path: string, encoding: string = 'utf8') {
   const file = join(dataDir, basename(path))
   return encoding == 'bytes'
@@ -72,7 +65,7 @@ const cases: BenchCase[] = [
   },
   {
     name: 'docs/Plot',
-    code: readFileSync(coreDocs('code/Plot.jsx'), 'utf8'),
+    code: readFileSync(join(docsCodeDir, 'Plot.jsx'), 'utf8'),
   },
 ]
 
