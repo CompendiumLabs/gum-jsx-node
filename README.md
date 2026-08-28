@@ -22,4 +22,4 @@ process.stdout.write(formatImage(png))                                       // 
 
 `rasterizeSvg(svg, { size?, background? })` fits the SVG's own size into `size` (a number or `[width, height]`) and returns a PNG `Buffer`; `rasterizePixels` returns the raw `ImageData` instead. `formatImage(png, args)` and `formatPixels(pixels, [w, h], args)` produce kitty graphics protocol escape sequences (`imageId`, `placementId`, `columns`, `rows`, `cursorMovement`, `chunkSize`). `ansi(text, { fg, bg, bold, italic })` styles terminal text and `readStdin()` reads all of stdin.
 
-The fonts registered with core (IBM Plex, Noto Emoji, and whatever add-ons such as `@gum-jsx/math` register) are handed to node-canvas at the first rasterization, so `<text>` in the SVG resolves to the same faces that were measured.
+The fonts registered with core (IBM Plex and whatever add-ons such as `@gum-jsx/math` register) are handed to node-canvas at the first rasterization, so `<text>` in the SVG resolves to the same faces that were measured. Emoji are not bundled: they are measured with a fixed advance and drawn with the system's emoji face (e.g. Noto Color Emoji) via fontconfig fallback.
