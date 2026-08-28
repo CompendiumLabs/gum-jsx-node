@@ -1,6 +1,6 @@
 # @gum-jsx/node
 
-The node runtime for [gum.jsx](https://github.com/CompendiumLabs/gum.jsx): rasterizes the SVG that `@gum-jsx/core` produces to PNG with [node-canvas](https://github.com/Automattic/node-canvas), formats images for kitty-protocol terminals, and reads stdin. Browser hosts do not need this package — they inline the SVG directly.
+The node runtime for [gum.jsx](https://github.com/CompendiumLabs/gum-jsx): rasterizes the SVG that `@gum-jsx/core` produces to PNG with [node-canvas](https://github.com/Automattic/node-canvas), formats images for kitty-protocol terminals, and reads stdin. Browser hosts do not need this package — they inline the SVG directly.
 
 ## Installation
 
