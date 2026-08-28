@@ -1,11 +1,11 @@
 # `@gum-jsx/node`
 
 The node runtime for gum.jsx: PNG rasterization via node-canvas, kitty terminal image output,
-ANSI styling and stdin. A pure library depending on `@gum-jsx/core` (linked locally while
-unpublished: `bun link` in `../gum.jsx`, then `"@gum-jsx/core": "link:@gum-jsx/core"` here; the
-peer dependency is marked optional so `bun install` does not look on npm). The CLIs that use it
-(`gum`, `gum-down`, `gum-tex`) live in core and `@gum-jsx/math` for now and will move to the
-batteries-included `gum-jsx` package.
+ANSI styling and stdin. A pure library with `@gum-jsx/core` as a peer dependency (`^1.7.0`,
+versioned in lockstep; a peer because it hands core's font registry to node-canvas, so the host
+must have exactly one core) and as a `devDependency` for typechecking; in the `gum-org` bun
+workspace both resolve to `../gum-jsx-core`. The CLIs that use it (`gum`, `gum-mark`,
+`gum-tex`) live in the batteries-included `gum-jsx` package (`../gum-jsx`).
 
 ## Layout
 
@@ -17,9 +17,10 @@ batteries-included `gum-jsx` package.
 ## Commands
 
 ```bash
-bun tsc --noEmit      # typecheck (follows the link into core's sources)
+bun tsc --noEmit      # typecheck (follows the workspace symlink into core's sources)
 bun scripts/bench.ts  # render benchmark; --help for options
 ```
 
-There is no test suite of its own: core's `scripts/test.ts` and the `gum` CLI's PNG/kitty output
-exercise it (`echo '<Circle />' | bun scripts/gum.ts -o out.png` in `../gum.jsx`).
+There is no test suite of its own: the `gum-jsx` suite (`scripts/test.ts` in `../gum-jsx`) and the
+`gum` CLI's PNG/kitty output exercise it (`echo '<Circle />' | bun scripts/gum.ts -o out.png` in
+`../gum-jsx`).
