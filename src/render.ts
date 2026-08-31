@@ -3,17 +3,17 @@
 import { createCanvas, registerFont, Image, type ImageData as CanvasImageData, type Canvas as CanvasType, type CanvasRenderingContext2D as CanvasRenderingContext2DType } from 'canvas'
 
 import type { Size } from '@gum-jsx/core/lib/types'
-import { FONT_PATHS } from '@gum-jsx/core/fonts'
+import { resolveEnv, type Env } from '@gum-jsx/core/env'
 import { light, regular, bold } from '@gum-jsx/core/lib/const'
 import { fitSize } from '@gum-jsx/core/eval'
 
-// register the gum font registry with node-canvas so SVG <text> resolves
-// consistently; done lazily at first draw so fonts registered after this
-// module is imported (the math faces, or a host's own) are picked up too
+// register an Env's font registry with node-canvas so SVG <text> resolves
+// consistently; done at each draw (tracking what is already registered) so
+// faces registered since (an add-on's, or a host's own) are picked up too
 const CANVAS_FONTS: Set<string> = new Set()
 
-function registerCanvasFonts(): void {
-  for (const [ family, path ] of Object.entries(FONT_PATHS)) {
+function registerCanvasFonts(env: Env): void {
+  for (const [ family, path ] of Object.entries(env.fonts.paths)) {
     if (CANVAS_FONTS.has(family)) continue
     CANVAS_FONTS.add(family)
     if (typeof path == 'string') {
@@ -29,6 +29,7 @@ function registerCanvasFonts(): void {
 interface RasterizeArgs {
   size?: Size
   background?: string
+  env?: Env           // whose fonts the SVG names (default: the default Env)
 }
 
 interface RasterizeResult {
@@ -36,8 +37,8 @@ interface RasterizeResult {
   ctx: CanvasRenderingContext2DType
 }
 
-function drawSvgCanvas(svg: string | Buffer, { size, background }: RasterizeArgs = {}): RasterizeResult {
-  registerCanvasFonts()
+function drawSvgCanvas(svg: string | Buffer, { size, background, env }: RasterizeArgs = {}): RasterizeResult {
+  registerCanvasFonts(resolveEnv(env))
 
   // create image object
   const buf = Buffer.isBuffer(svg) ? svg : Buffer.from(svg)
@@ -65,13 +66,13 @@ function drawSvgCanvas(svg: string | Buffer, { size, background }: RasterizeArgs
   return { canvas, ctx }
 }
 
-function rasterizeSvg(svg: string | Buffer, { size, background }: RasterizeArgs = {}): Buffer {
-  const { canvas } = drawSvgCanvas(svg, { size, background })
+function rasterizeSvg(svg: string | Buffer, args: RasterizeArgs = {}): Buffer {
+  const { canvas } = drawSvgCanvas(svg, args)
   return canvas.toBuffer('image/png')
 }
 
-function rasterizePixels(svg: string | Buffer, { size, background }: RasterizeArgs = {}): CanvasImageData {
-  const { canvas, ctx } = drawSvgCanvas(svg, { size, background })
+function rasterizePixels(svg: string | Buffer, args: RasterizeArgs = {}): CanvasImageData {
+  const { canvas, ctx } = drawSvgCanvas(svg, args)
   return ctx.getImageData(0, 0, canvas.width, canvas.height)
 }
 
