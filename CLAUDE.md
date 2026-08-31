@@ -1,7 +1,7 @@
 # `@gum-jsx/node`
 
 The node runtime for gum.jsx: PNG rasterization via node-canvas, kitty terminal image output,
-ANSI styling and stdin. A pure library with `@gum-jsx/core` as a peer dependency (`^1.7.0`,
+ANSI styling and stdin. A pure library with `@gum-jsx/core` as a peer dependency (`^1.8.0`,
 versioned in lockstep; a peer because it hands a core `Env`'s font registry to node-canvas, so
 the host must have exactly one core) and as a `devDependency` for typechecking; in the `gum-org` bun
 workspace both resolve to `../gum-jsx-core`. The CLIs that use it (`gum`, `gum-mark`,
