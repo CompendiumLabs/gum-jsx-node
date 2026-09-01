@@ -6,5 +6,5 @@
 
 export { rasterizeSvg, rasterizePixels } from './render'
 export type { RasterizeArgs } from './render'
-export { ansi, formatImage, formatPixels, readStdin, ANSI_LO, ANSI_HI } from './term'
+export { ansi, formatImage, formatPixels, formatPlaceholder, pngSize, queryCellSize, readStdin, ANSI_LO, ANSI_HI } from './term'
 export type { Color, FormatImageArgs } from './term'
