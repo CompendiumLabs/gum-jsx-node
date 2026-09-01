@@ -124,19 +124,24 @@ const ROWCOL_DIACRITICS = [
   0x1D187, 0x1D188, 0x1D189, 0x1D1AA, 0x1D1AB, 0x1D1AC, 0x1D1AD, 0x1D242, 0x1D243, 0x1D244,
 ]
 
-// the low 24 bits of the image id as a colon-form truecolor foreground (what kitten icat
-// emits): palette-index colors are avoided since terminals may resolve them to theme rgb
-// before the id lookup, and semicolon truecolor can be eaten as separate params
-function placeholderColor(imageId: number): string {
-  const r = (imageId >> 16) & 0xff, g = (imageId >> 8) & 0xff, b = imageId & 0xff
-  return `\x1b[38:2:${r}:${g}:${b}m`
+// the low 24 bits of an id as colon-form truecolor (what kitten icat emits) on the given
+// SGR channel — 38 foreground for the image id, 58 underline for the placement id:
+// palette-index colors are avoided since terminals may resolve them to theme rgb before
+// the id lookup, and semicolon truecolor can be eaten as separate params
+function placeholderColor(channel: 38 | 58, id: number): string {
+  const r = (id >> 16) & 0xff, g = (id >> 8) & 0xff, b = id & 0xff
+  return `\x1b[${channel}:2:${r}:${g}:${b}m`
 }
 
 // the placeholder text grid for a rows × cols virtual placement, one text line per row;
 // each cell carries three diacritics: its row, its column, and the image id's most
-// significant byte (always written, like icat, though it is zero for ids under 2^24)
-function formatPlaceholder(imageId: number, rows: number, cols: number): string {
-  const color = placeholderColor(imageId)
+// significant byte (always written, like icat, though it is zero for ids under 2^24).
+// Naming the placement (its id in the underline color) makes the lookup exact: without
+// it a terminal picks any virtual placement of the image, and ghostty keeps stale ones
+// from earlier transmissions of the same image id around
+function formatPlaceholder(imageId: number, rows: number, cols: number, placementId?: number): string {
+  const color = placeholderColor(38, imageId) + (placementId != null ? placeholderColor(58, placementId) : '')
+  const reset = '\x1b[39m' + (placementId != null ? '\x1b[59m' : '')
   const idMark = String.fromCodePoint(ROWCOL_DIACRITICS[(imageId >> 24) & 0xff])
   const nrows = Math.min(rows, ROWCOL_DIACRITICS.length)
   const ncols = Math.min(cols, ROWCOL_DIACRITICS.length)
@@ -147,7 +152,7 @@ function formatPlaceholder(imageId: number, rows: number, cols: number): string 
     for (let c = 0; c < ncols; c++) {
       line += PLACEHOLDER + rowMark + String.fromCodePoint(ROWCOL_DIACRITICS[c]) + idMark
     }
-    lines.push(line + '\x1b[39m')
+    lines.push(line + reset)
   }
   return lines.join('\n')
 }
