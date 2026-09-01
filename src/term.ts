@@ -173,14 +173,16 @@ function queryCellSize(): [number, number] | null {
       // min 0 time 5: reads return within half a second even if the terminal stays silent
       execSync('stty raw -echo min 0 time 5', { stdio: [fd, 'ignore', 'ignore'] })
       writeSync(fd, '\x1b[16t')
-      const buf = Buffer.alloc(64)
+      const buf = Buffer.alloc(256)
       let resp = ''
-      while (!resp.includes('t')) {
+      let match: RegExpMatchArray | null = null
+      // stray pending input (a late terminal reply, typed-ahead keys) may precede the
+      // answer, so read until the answer itself appears, not just any byte
+      while ((match = resp.match(/\x1b\[6;(\d+);(\d+)t/)) == null) {
         const n = readSync(fd, buf, 0, buf.length, null)
         if (n === 0) break
         resp += buf.toString('utf8', 0, n)
       }
-      const match = resp.match(/\x1b\[6;(\d+);(\d+)t/)
       return match ? [ Number(match[2]), Number(match[1]) ] : null
     } finally {
       execSync(`stty ${saved}`, { stdio: [fd, 'ignore', 'ignore'] })
