@@ -15,17 +15,29 @@
   },
   "files": [
     "src",
-    "scripts"
+    "scripts",
+    "types"
   ],
   "exports": {
-    ".": "./src/index.ts",
-    "./render": "./src/render.ts",
-    "./term": "./src/term.ts",
+    ".": {
+      "types": "./types/index.d.ts",
+      "import": "./src/index.ts"
+    },
+    "./render": {
+      "types": "./types/render.d.ts",
+      "import": "./src/render.ts"
+    },
+    "./term": {
+      "types": "./types/term.d.ts",
+      "import": "./src/term.ts"
+    },
     "./package.json": "./package.json"
   },
   "scripts": {
     "bench": "bun ./scripts/bench.ts",
-    "typecheck": "bun tsc --noEmit"
+    "typecheck": "bun tsc --noEmit",
+    "types": "rm -rf types && bun tsc -p tsconfig.types.json",
+    "prepublishOnly": "bun run types"
   },
   "peerDependencies": {
     "@gum-jsx/core": "^1.8.0"
